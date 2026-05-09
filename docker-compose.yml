@@ -1,0 +1,59 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: intellishop_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: intelli_shop
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  user_service:
+    build: ./services/user_service
+    container_name: user_service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+
+  station_service:
+    build: ./services/station_service
+    container_name: station_service
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+
+  charging_service:
+    build: ./services/charging_service
+    container_name: charging_service
+    ports:
+      - "8002:8002"
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+
+  forecasting_service:
+    build: ./services/forecasting_service
+    container_name: forecasting_service
+    ports:
+      - "8003:8003"
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+
+volumes:
+  mysql_data:

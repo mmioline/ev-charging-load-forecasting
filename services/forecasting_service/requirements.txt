@@ -1,0 +1,17 @@
+torch
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+pydantic
+pydantic-settings
+python-jose[cryptography]
+bcrypt
+requests
+pandas
+numpy
+scikit-learn
+email-validator
+python-multipart
+
+--extra-index-url https://download.pytorch.org/whl/cpu

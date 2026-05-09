@@ -1,0 +1,26 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 深度学习模型文件 (权重文件通常较大，建议不上传或使用 LFS)
+*.pt
+*.pth
+checkpoint/
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# 环境配置文件 (包含数据库密码等敏感信息)
+.env
+
+# Docker 数据卷
+docker_volumes/
+mysql_data/
+
+# IDE 与系统文件
+.vscode/
+.idea/
+.DS_Store
