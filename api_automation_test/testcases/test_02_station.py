@@ -11,13 +11,13 @@ class TestStationFlow(unittest.TestCase):
         """异常测试：不带 Token 创建站点应被拒绝"""
         url = f"{self.base_url}/stations"
         payload = {"name": "非法站点", "capacity": 100, "slots": 5}
-        r = requests.post(url, json=payload)
+        r = requests.post(url, json=payload, timeout=5)
         self.assertEqual(r.status_code, 401)
 
     def test_create_station_success(self):
         """正常测试：带合法 Token 创建站点"""
         url = f"{self.base_url}/stations"
         payload = {"name": "南山科技园测试站", "capacity": 500, "slots": 20}
-        r = requests.post(url, json=payload, headers=self.headers)
+        r = requests.post(url, json=payload, headers=self.headers,timeout=5)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.json()["name"], "南山科技园测试站")

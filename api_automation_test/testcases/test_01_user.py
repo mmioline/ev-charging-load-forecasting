@@ -30,7 +30,7 @@ class TestEVUserFlow(unittest.TestCase):
             "username": self.test_username,
             "password": self.test_password
         }
-        r = requests.post(url, data=payload)
+        r = requests.post(url, json=payload, timeout=5)
         self.assertEqual(r.status_code, 200)
         
         result = r.json()
