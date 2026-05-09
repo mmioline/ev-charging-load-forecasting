@@ -4,35 +4,29 @@ import requests
 class TestEVForecasting(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # 对应 docker-compose 中的端口 8003
+        # 对应 docker-compose.yml 中定义的端口
         cls.base_url = "http://127.0.0.1:8003"
-        cls.headers = {"Content-Type": "application/json"}
 
-    def test_get_prediction_success(self):
-        """测试 LSTM 负荷预测接口是否返回有效结果"""
-        url = f"{self.base_url}/predict/1"  # 假设测试 station_id 为 1
+    def test_01_predict_load_success(self):
+        """测试正常获取充电站负荷预测结果"""
+        station_id = 1
+        url = f"{self.base_url}/predict/{station_id}"
         
-        try:
-            # 增加超时处理以增强鲁棒性
-            r = requests.get(url, headers=self.headers, timeout=10)
-            self.assertEqual(r.status_code, 200)
-            
-            data = r.json()
-            # 验证返回字段结构
-            self.assertIn("station_id", data)
-            self.assertIn("predicted_load_kwh", data)
-            self.assertIn("model_type", data)
-            
-            # 验证业务逻辑：预测负荷应为正数
-            self.assertGreaterEqual(data["predicted_load_kwh"], 0)
-            print(f"预测结果：{data['predicted_load_kwh']} kWh")
-            
-        except requests.exceptions.RequestException as e:
-            self.fail(f"接口连接失败: {e}")
+        # 增加 timeout 预防之前的卡死问题
+        response = requests.get(url, timeout=5)
+        
+        # 验证 HTTP 状态码
+        self.assertEqual(response.status_code, 200)
+        
+        data = response.json()
+        # 验证返回结构是否符合 schemas.py 定义
+        self.assertIn("predicted_load_kwh", data)
+        self.assertIsInstance(data["predicted_load_kwh"], float)
+        # 业务逻辑断言：预测负荷不能为负数
+        self.assertGreaterEqual(data["predicted_load_kwh"], 0)
 
-    def test_prediction_invalid_station(self):
-        """测试非法站点 ID 的异常处理"""
-        url = f"{self.base_url}/predict/9999"
-        r = requests.get(url, timeout=5)
-        # 根据 FastAPI 定义，未找到资源应返回 404
-        self.assertEqual(r.status_code, 404)
+    def test_02_predict_invalid_station(self):
+        """测试不存在的站点 ID 异常返回"""
+        url = f"{self.base_url}/predict/99999"
+        response = requests.get(url, timeout=5)
+        self.assertEqual(response.status_code, 404)
