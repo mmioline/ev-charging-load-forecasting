@@ -18,7 +18,7 @@ class TestEVUserFlow(unittest.TestCase):
             "email": f"{self.test_username}@ev.com",
             "password": self.test_password
         }
-        r = requests.post(url, json=payload)
+        r = requests.post(url, json=payload, timeout=5)
         # 断言：由于系统可能已经存在该用户，判断 200 或 400
         self.assertIn(r.status_code, [200, 400]) 
 
