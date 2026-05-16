@@ -51,3 +51,5 @@ def auth_headers(env_urls):
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
+
+# \\wsl.localhost\Ubuntu-24.04 + 报告路径 
