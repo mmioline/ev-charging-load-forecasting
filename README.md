@@ -239,6 +239,38 @@ curl -sS http://localhost:8003/predict/1
 
 ## 7. 运行测试
 
+测试前请确认四个服务已经启动：
+
+```bash
+docker compose ps
+curl -sS http://localhost:8000/health
+```
+
+安装测试依赖：
+
+```bash
+cd ~/myshop
+source venv/bin/activate
+pip install pytest requests httpx anyio pytest-html
+```
+
+`api_pytest/conftest.py` 是 pytest 的公共夹具文件：
+
+- `env_urls` 统一提供用户服务、充电站服务、预测服务的基础地址。
+- `auth_headers` 会在测试开始时尝试注册 `pytest_admin`，随后登录并提取 JWT Token，最后返回带 `Authorization` 的请求头。
+
+建议运行测试前手动注册 pytest 专用账号，避免单独运行 `test_01_user.py` 时因账号不存在导致登录失败：
+
+```bash
+curl -sS -X POST http://localhost:8000/register \
+  -H "Content-Type: application/json" \
+  -d '{"username": "pytest_admin", "email": "pytest_admin@ev.com", "password": "password_123"}'
+```
+
+如果返回 `Email already registered`，说明账号已存在，可以继续测试。
+
+说明：`test_login_success` 只依赖 `env_urls`，不会触发 `auth_headers` 自动注册流程。因此首次单独运行该测试时，如果数据库里没有 `pytest_admin`，可能出现 `400 != 200`。这不是登录接口本身的 bug，而是测试用例依赖了预置账号。解决方式是先执行上面的注册命令，或先运行会使用 `auth_headers` 的接口测试。
+
 运行全部接口测试：
 
 ```bash
@@ -258,6 +290,7 @@ pytest api_pytest/testcases/test_03_forecast.py -q
 运行集成测试：
 
 ```bash
+pip install httpx anyio
 pytest services/integration_test.py -q
 ```
 
