@@ -6,6 +6,7 @@ from typing import Optional
 class StationStatus(str, Enum):
     available = "空闲"
     charging = "充电中"
+    abnormal = "异常"
     fault = "故障"
 
 class StationBase(BaseModel):

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import inspect, text
@@ -59,9 +59,64 @@ def get_station_or_404(station_id: int, db: Session) -> models.Station:
         raise HTTPException(status_code=404, detail="Station not found")
     return station
 
+
+def parse_cached_datetime(value: str):
+    try:
+        return datetime.fromisoformat(value)
+    except (TypeError, ValueError):
+        return None
+
+STALE_CHARGING_THRESHOLD = timedelta(hours=24)
+
+
+def mark_stale_charging_stations(db: Session) -> None:
+    stale_before = datetime.utcnow() - STALE_CHARGING_THRESHOLD
+    stale_stations = (
+        db.query(models.Station)
+        .filter(
+            models.Station.status == schemas.StationStatus.charging.value,
+            models.Station.last_updated_at < stale_before,
+        )
+        .all()
+    )
+    if not stale_stations:
+        return
+
+    now = datetime.utcnow()
+    for station in stale_stations:
+        station.status = schemas.StationStatus.abnormal.value
+        station.last_updated_at = now
+
+    db.commit()
+    for station in stale_stations:
+        db.refresh(station)
+        cache_station_status(station.id, station.status, station.last_updated_at)
+
+
+def refresh_stale_station_status(station: models.Station, db: Session) -> models.Station:
+    stale_before = datetime.utcnow() - STALE_CHARGING_THRESHOLD
+    if (
+        station.status == schemas.StationStatus.charging.value
+        and station.last_updated_at
+        and station.last_updated_at < stale_before
+    ):
+        station.status = schemas.StationStatus.abnormal.value
+        station.last_updated_at = datetime.utcnow()
+        db.commit()
+        db.refresh(station)
+        cache_station_status(station.id, station.status, station.last_updated_at)
+    return station
+
+
 def build_station_response(station: models.Station) -> dict:
     cached_status = get_cached_station_status(station.id)
-    if cached_status:
+    cached_updated_at = parse_cached_datetime(cached_status.get("last_updated_at")) if cached_status else None
+    if (
+        cached_status
+        and cached_updated_at
+        and station.last_updated_at
+        and cached_updated_at >= station.last_updated_at
+    ):
         return {
             "id": station.id,
             "name": station.name,
@@ -84,7 +139,13 @@ def build_station_response(station: models.Station) -> dict:
 
 def build_status_response(station: models.Station) -> dict:
     cached_status = get_cached_station_status(station.id)
-    if cached_status:
+    cached_updated_at = parse_cached_datetime(cached_status.get("last_updated_at")) if cached_status else None
+    if (
+        cached_status
+        and cached_updated_at
+        and station.last_updated_at
+        and cached_updated_at >= station.last_updated_at
+    ):
         return {
             "station_id": station.id,
             "status": cached_status["status"],
@@ -114,6 +175,7 @@ def create_station(
 
 @app.get("/stations", response_model=List[schemas.StationOut])
 def list_stations(db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
+    mark_stale_charging_stations(db)
     stations = db.query(models.Station).all()
     return [build_station_response(station) for station in stations]
 
@@ -122,6 +184,7 @@ def list_available_stations(
     db: Session = Depends(get_db),
     current_user: str = Depends(get_current_user)
 ):
+    mark_stale_charging_stations(db)
     stations = db.query(models.Station).all()
     station_responses = [build_station_response(station) for station in stations]
     return [
@@ -137,6 +200,7 @@ def get_station(
     current_user: str = Depends(get_current_user)
 ):
     station = get_station_or_404(station_id, db)
+    station = refresh_stale_station_status(station, db)
     return build_station_response(station)
 
 @app.get("/stations/{station_id}/status", response_model=schemas.StationStatusOut)
@@ -146,6 +210,7 @@ def get_station_status(
     current_user: str = Depends(get_current_user)
 ):
     station = get_station_or_404(station_id, db)
+    station = refresh_stale_station_status(station, db)
     return build_status_response(station)
 
 @app.put("/stations/{station_id}/status", response_model=schemas.StationStatusOut)
