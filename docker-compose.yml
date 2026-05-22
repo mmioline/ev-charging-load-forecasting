@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql:8.0
+    image: docker.m.daocloud.io/library/mysql:8.0
     container_name: intellishop_db
     restart: always
     environment:
@@ -10,6 +10,13 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+  redis:
+    image: docker.m.daocloud.io/library/redis:7-alpine
+    container_name: ev_station_redis
+    restart: always
+    ports:
+      - "6379:6379"
 
   user_service:
     build: ./services/user_service
@@ -29,9 +36,11 @@ services:
       - "8001:8001"
     depends_on:
       - db
+      - redis
     env_file: .env
     environment:
       - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+      - REDIS_URL=redis://redis:6379/0
 
   charging_service:
     build: ./services/charging_service
@@ -40,9 +49,11 @@ services:
       - "8002:8002"
     depends_on:
       - db
+      - station_service
     env_file: .env
     environment:
       - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+      - STATION_SERVICE_URL=http://station_service:8001
 
   forecasting_service:
     build: ./services/forecasting_service

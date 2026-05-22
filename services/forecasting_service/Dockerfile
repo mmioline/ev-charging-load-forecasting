@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM docker.m.daocloud.io/library/python:3.12-slim
 WORKDIR /app
 
 # 设置国内镜像源环境变量，加速所有 pip 操作

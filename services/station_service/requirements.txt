@@ -9,6 +9,7 @@ bcrypt
 requests
 email-validator
 python-multipart
+redis
 
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch
