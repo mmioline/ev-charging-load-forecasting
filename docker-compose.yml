@@ -6,8 +6,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: intelli_shop
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -15,8 +13,6 @@ services:
     image: docker.m.daocloud.io/library/redis:7-alpine
     container_name: ev_station_redis
     restart: always
-    ports:
-      - "6379:6379"
 
   user_service:
     build: ./services/user_service
@@ -50,10 +46,12 @@ services:
     depends_on:
       - db
       - station_service
+      - redis
     env_file: .env
     environment:
       - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
       - STATION_SERVICE_URL=http://station_service:8001
+      - REDIS_URL=redis://redis:6379/0
 
   forecasting_service:
     build: ./services/forecasting_service
