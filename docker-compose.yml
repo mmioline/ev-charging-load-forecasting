@@ -18,7 +18,7 @@ services:
     build: ./services/user_service
     container_name: user_service
     ports:
-      - "8000:8000"
+      - "18010:8000"
     depends_on:
       - db
     env_file: .env
@@ -29,7 +29,7 @@ services:
     build: ./services/station_service
     container_name: station_service
     ports:
-      - "8001:8001"
+      - "18011:8001"
     depends_on:
       - db
       - redis
@@ -42,7 +42,7 @@ services:
     build: ./services/charging_service
     container_name: charging_service
     ports:
-      - "8002:8002"
+      - "18012:8002"
     depends_on:
       - db
       - station_service
@@ -57,12 +57,23 @@ services:
     build: ./services/forecasting_service
     container_name: forecasting_service
     ports:
-      - "8003:8003"
+      - "18013:8003"
     depends_on:
       - db
     env_file: .env
     environment:
       - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "18080:8080"
+    depends_on:
+      - user_service
+      - station_service
+      - charging_service
+      - forecasting_service
 
 volumes:
   mysql_data:

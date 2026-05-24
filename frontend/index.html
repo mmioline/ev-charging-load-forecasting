@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EV Charging Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --text: #20242a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --primary: #177245;
+      --primary-dark: #0f5a35;
+      --warn: #b54708;
+      --bad: #b42318;
+      --blue: #175cd3;
+      --shadow: 0 8px 24px rgba(18, 25, 38, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 64px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+    }
+
+    section, aside {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    aside {
+      padding: 16px;
+      align-self: start;
+      position: sticky;
+      top: 84px;
+    }
+
+    .content {
+      display: grid;
+      gap: 16px;
+    }
+
+    section {
+      padding: 16px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input, select {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
+      background: #fff;
+    }
+
+    button {
+      height: 38px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0 12px;
+      font: inherit;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    button.secondary {
+      background: #fff;
+      color: var(--text);
+      border-color: var(--line);
+    }
+
+    button.secondary:hover {
+      background: #f7f8fa;
+    }
+
+    button.danger {
+      background: var(--bad);
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1 1 auto;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .station {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 148px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+      background: #fff;
+    }
+
+    .station.selected {
+      border-color: var(--blue);
+      outline: 2px solid rgba(23, 92, 211, 0.14);
+    }
+
+    .titleline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .name {
+      font-weight: 700;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .badge.idle {
+      color: #05603a;
+      background: #d1fadf;
+      border-color: #a6f4c5;
+    }
+
+    .badge.charging {
+      color: #1849a9;
+      background: #d1e9ff;
+      border-color: #b2ddff;
+    }
+
+    .badge.abnormal, .badge.fault {
+      color: #912018;
+      background: #fee4e2;
+      border-color: #fecdca;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 72px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      background: #fafbfc;
+    }
+
+    .message {
+      min-height: 36px;
+      padding: 9px 10px;
+      border-radius: 6px;
+      margin-top: 12px;
+      background: #f7f8fa;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .message.ok {
+      background: #ecfdf3;
+      color: #05603a;
+    }
+
+    .message.err {
+      background: #fef3f2;
+      color: var(--bad);
+    }
+
+    .account {
+      display: grid;
+      gap: 10px;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+      }
+
+      .grid, .summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <h1>电动车充电站管理系统</h1>
+      <div class="row" style="justify-content: flex-end;">
+        <button class="secondary" id="refreshBtn" type="button">刷新</button>
+        <button class="danger" id="logoutBtn" type="button">退出</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <h2>账号</h2>
+      <div class="account">
+        <div class="row">
+          <button class="secondary" type="button" data-fill="alice">Alice</button>
+          <button class="secondary" type="button" data-fill="bob">Bob</button>
+        </div>
+        <label for="username">用户名</label>
+        <input id="username" value="alice" autocomplete="username">
+        <label for="password">密码</label>
+        <input id="password" value="alice1234" type="password" autocomplete="current-password">
+        <label for="email">邮箱</label>
+        <input id="email" value="alice@ev.com" type="email">
+        <div class="row">
+          <button id="loginBtn" type="button">登录</button>
+          <button class="secondary" id="registerBtn" type="button">注册</button>
+        </div>
+        <div id="accountInfo" class="message">未登录</div>
+      </div>
+
+      <h2 style="margin-top: 18px;">充电</h2>
+      <label for="stationSelect">站点</label>
+      <select id="stationSelect">
+        <option value="">登录后加载站点</option>
+      </select>
+      <label for="duration">时长 分钟</label>
+      <input id="duration" type="number" min="1" value="45">
+      <label for="kwh">消耗 kWh</label>
+      <input id="kwh" type="number" min="0" step="0.1" value="22.5">
+      <button id="chargeBtn" type="button" style="width: 100%; margin-top: 12px;">发起充电</button>
+      <button class="secondary" id="predictBtn" type="button" style="width: 100%; margin-top: 8px;">查看预测</button>
+      <div id="actionMsg" class="message">请选择站点后操作</div>
+    </aside>
+
+    <div class="content">
+      <section>
+        <div class="toolbar">
+          <h2>运行概览</h2>
+        </div>
+        <div class="summary">
+          <div class="metric"><strong id="totalCount">0</strong><span>站点总数</span></div>
+          <div class="metric"><strong id="idleCount">0</strong><span>空闲站点</span></div>
+          <div class="metric"><strong id="chargingCount">0</strong><span>充电中</span></div>
+          <div class="metric"><strong id="abnormalCount">0</strong><span>异常/故障</span></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="toolbar">
+          <h2>站点列表</h2>
+          <div class="row" style="justify-content: flex-end;">
+            <button class="secondary" id="availableBtn" type="button">只看空闲</button>
+            <button class="secondary" id="allBtn" type="button">全部站点</button>
+          </div>
+        </div>
+        <div id="stations" class="grid"></div>
+      </section>
+
+      <section>
+        <div class="toolbar">
+          <h2>预测结果</h2>
+        </div>
+        <div id="prediction" class="message">暂无预测结果</div>
+      </section>
+
+      <section>
+        <div class="toolbar">
+          <h2>我的充电记录</h2>
+          <button class="secondary" id="recordsBtn" type="button">刷新记录</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>站点</th>
+                <th>时长</th>
+                <th>kWh</th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody id="records"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function resolveApiHost() {
+      const host = window.location.hostname;
+      if (!host || host === "0.0.0.0") {
+        return "localhost";
+      }
+      return host;
+    }
+
+    const apiHost = resolveApiHost();
+    const api = {
+      user: `http://${apiHost}:18010`,
+      station: `http://${apiHost}:18011`,
+      charging: `http://${apiHost}:18012`,
+      forecast: `http://${apiHost}:18013`,
+    };
+
+    function readStorage(key) {
+      try {
+        return window.localStorage.getItem(key) || "";
+      } catch {
+        return "";
+      }
+    }
+
+    function writeStorage(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch {
+        // Some file:// browser contexts disable localStorage.
+      }
+    }
+
+    function removeStorage(key) {
+      try {
+        window.localStorage.removeItem(key);
+      } catch {
+        // Some file:// browser contexts disable localStorage.
+      }
+    }
+
+    const state = {
+      token: readStorage("ev_token"),
+      username: readStorage("ev_username"),
+      stations: [],
+      selectedStationId: null,
+      filterAvailable: false,
+    };
+
+    const el = (id) => document.getElementById(id);
+
+    function authHeaders() {
+      return {
+        "Authorization": `Bearer ${state.token}`,
+        "Content-Type": "application/json",
+      };
+    }
+
+    async function request(url, options = {}) {
+      let response;
+      try {
+        response = await fetch(url, options);
+      } catch (error) {
+        throw new Error(`无法连接服务：${url}`);
+      }
+      const text = await response.text();
+      let data = null;
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
+      }
+      if (!response.ok) {
+        const detail = data && data.detail ? data.detail : response.statusText;
+        throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
+      }
+      return data;
+    }
+
+    async function checkServices() {
+      try {
+        await request(`${api.user}/health`);
+        return true;
+      } catch (error) {
+        setMessage(
+          el("accountInfo"),
+          `${error.message}。请确认 Docker 服务已启动，并用 http://${apiHost}:18080 打开本页面。`,
+          "err"
+        );
+        return false;
+      }
+    }
+
+    function setMessage(node, text, kind = "") {
+      node.textContent = text;
+      node.className = `message ${kind}`.trim();
+    }
+
+    function statusClass(status) {
+      if (status === "空闲") return "idle";
+      if (status === "充电中") return "charging";
+      if (status === "异常") return "abnormal";
+      if (status === "故障") return "fault";
+      return "";
+    }
+
+    function updateSummary() {
+      const total = state.stations.length;
+      const idle = state.stations.filter((item) => item.status === "空闲").length;
+      const charging = state.stations.filter((item) => item.status === "充电中").length;
+      const abnormal = state.stations.filter((item) => item.status === "异常" || item.status === "故障").length;
+      el("totalCount").textContent = total;
+      el("idleCount").textContent = idle;
+      el("chargingCount").textContent = charging;
+      el("abnormalCount").textContent = abnormal;
+    }
+
+    function renderStations() {
+      updateSummary();
+      const list = state.filterAvailable
+        ? state.stations.filter((item) => item.status === "空闲")
+        : state.stations;
+      const container = el("stations");
+      container.innerHTML = "";
+      el("stationSelect").innerHTML = "";
+
+      state.stations.forEach((station) => {
+        const option = document.createElement("option");
+        option.value = station.id;
+        option.textContent = `${station.id} - ${station.name}`;
+        el("stationSelect").appendChild(option);
+      });
+
+      if (!state.stations.length) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "暂无站点";
+        el("stationSelect").appendChild(option);
+      }
+
+      if (!state.selectedStationId && state.stations[0]) {
+        state.selectedStationId = state.stations[0].id;
+      }
+      if (state.selectedStationId) {
+        el("stationSelect").value = String(state.selectedStationId);
+      }
+
+      if (!list.length) {
+        container.innerHTML = '<div class="message">暂无站点。请先按演示流程创建 A/B/C 三个充电站，然后点击刷新。</div>';
+        return;
+      }
+
+      list.forEach((station) => {
+        const card = document.createElement("article");
+        card.className = `station ${station.id === state.selectedStationId ? "selected" : ""}`;
+        card.innerHTML = `
+          <div class="titleline">
+            <div class="name">${station.name}</div>
+            <span class="badge ${statusClass(station.status)}">${station.status}</span>
+          </div>
+          <div class="meta">ID：${station.id}</div>
+          <div class="meta">位置：${station.location || "-"}</div>
+          <div class="meta">功率：${station.capacity} kW · 桩位：${station.slots}</div>
+          <div class="meta">更新：${formatTime(station.last_updated_at)}</div>
+        `;
+        card.addEventListener("click", () => {
+          state.selectedStationId = station.id;
+          renderStations();
+          setMessage(el("actionMsg"), `已选择 ${station.name}`, "ok");
+        });
+        container.appendChild(card);
+      });
+    }
+
+    function formatTime(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString();
+    }
+
+    async function loadStations() {
+      if (!state.token) return;
+      const stations = await request(`${api.station}/stations`, {
+        headers: authHeaders(),
+      });
+      state.stations = stations;
+      renderStations();
+      if (!stations.length) {
+        setMessage(el("actionMsg"), "当前数据库没有站点，请先执行演示流程第四步创建站点。");
+      }
+    }
+
+    async function loadRecords() {
+      if (!state.token) return;
+      const records = await request(`${api.charging}/charging`, {
+        headers: authHeaders(),
+      });
+      const tbody = el("records");
+      tbody.innerHTML = "";
+      if (!records.length) {
+        tbody.innerHTML = '<tr><td colspan="5">暂无记录</td></tr>';
+        return;
+      }
+      records.forEach((record) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${record.id}</td>
+          <td>${record.station_id}</td>
+          <td>${record.duration_minutes} 分钟</td>
+          <td>${record.kwh_consumed}</td>
+          <td>${formatTime(record.created_at)}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    async function refreshAll() {
+      if (!state.token) {
+        setMessage(el("accountInfo"), "请先登录");
+        return;
+      }
+      try {
+        await loadStations();
+        await loadRecords();
+        setMessage(el("accountInfo"), `当前用户：${state.username}`, "ok");
+      } catch (error) {
+        setMessage(el("accountInfo"), error.message, "err");
+      }
+    }
+
+    async function login() {
+      const username = el("username").value.trim();
+      const password = el("password").value;
+      setMessage(el("accountInfo"), "正在登录...");
+      const body = new URLSearchParams();
+      body.set("username", username);
+      body.set("password", password);
+      try {
+        const data = await request(`${api.user}/login`, {
+          method: "POST",
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          body,
+        });
+        state.token = data.access_token;
+        state.username = username;
+        writeStorage("ev_token", state.token);
+        writeStorage("ev_username", state.username);
+        setMessage(el("accountInfo"), `当前用户：${username}`, "ok");
+        await refreshAll();
+      } catch (error) {
+        setMessage(el("accountInfo"), error.message, "err");
+      }
+    }
+
+    async function register() {
+      const username = el("username").value.trim();
+      const password = el("password").value;
+      const email = el("email").value.trim();
+      setMessage(el("accountInfo"), "正在注册...");
+      try {
+        await request(`${api.user}/register`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({username, password, email}),
+        });
+        setMessage(el("accountInfo"), "注册成功", "ok");
+      } catch (error) {
+        setMessage(el("accountInfo"), error.message, "err");
+      }
+    }
+
+    async function charge() {
+      const stationId = Number(el("stationSelect").value || state.selectedStationId);
+      const duration = Number(el("duration").value);
+      const kwh = Number(el("kwh").value);
+      if (!stationId) {
+        setMessage(el("actionMsg"), "请选择站点", "err");
+        return;
+      }
+      try {
+        const record = await request(`${api.charging}/charging`, {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({
+            station_id: stationId,
+            duration_minutes: duration,
+            kwh_consumed: kwh,
+          }),
+        });
+        setMessage(el("actionMsg"), `充电记录已创建：#${record.id}`, "ok");
+        await refreshAll();
+      } catch (error) {
+        setMessage(el("actionMsg"), error.message, "err");
+      }
+    }
+
+    async function predict() {
+      const stationId = Number(el("stationSelect").value || state.selectedStationId);
+      if (!stationId) {
+        setMessage(el("prediction"), "请选择站点", "err");
+        return;
+      }
+      try {
+        const data = await request(`${api.forecast}/predict/${stationId}`);
+        const load = typeof data.predicted_load_kwh === "number"
+          ? `${data.predicted_load_kwh} kWh`
+          : data.predicted_load_kwh;
+        setMessage(
+          el("prediction"),
+          `站点 ${stationId}：负荷预测 ${load}；${data.idle_probability_message}`,
+          "ok"
+        );
+      } catch (error) {
+        setMessage(el("prediction"), error.message, "err");
+      }
+    }
+
+    function fillAccount(name) {
+      if (name === "bob") {
+        el("username").value = "bob";
+        el("password").value = "bob1234";
+        el("email").value = "bob@ev.com";
+        return;
+      }
+      el("username").value = "alice";
+      el("password").value = "alice1234";
+      el("email").value = "alice@ev.com";
+    }
+
+    function bindEvents() {
+      el("loginBtn").addEventListener("click", login);
+      el("registerBtn").addEventListener("click", register);
+      el("refreshBtn").addEventListener("click", refreshAll);
+      el("recordsBtn").addEventListener("click", loadRecords);
+      el("chargeBtn").addEventListener("click", charge);
+      el("predictBtn").addEventListener("click", predict);
+      el("availableBtn").addEventListener("click", () => {
+        state.filterAvailable = true;
+        renderStations();
+      });
+      el("allBtn").addEventListener("click", () => {
+        state.filterAvailable = false;
+        renderStations();
+      });
+      el("stationSelect").addEventListener("change", (event) => {
+        state.selectedStationId = Number(event.target.value);
+        renderStations();
+      });
+      el("logoutBtn").addEventListener("click", () => {
+        state.token = "";
+        state.username = "";
+        removeStorage("ev_token");
+        removeStorage("ev_username");
+        state.stations = [];
+        el("records").innerHTML = "";
+        renderStations();
+        setMessage(el("accountInfo"), "未登录");
+      });
+      document.querySelectorAll("[data-fill]").forEach((button) => {
+        button.addEventListener("click", () => fillAccount(button.dataset.fill));
+      });
+    }
+
+    async function boot() {
+      try {
+        bindEvents();
+        renderStations();
+        const healthy = await checkServices();
+        if (state.username) {
+          el("username").value = state.username;
+          setMessage(el("accountInfo"), `当前用户：${state.username}`, "ok");
+          if (healthy) {
+            refreshAll();
+          }
+        } else if (healthy) {
+          setMessage(el("accountInfo"), `请登录。当前接口主机：${apiHost}`);
+        }
+      } catch (error) {
+        setMessage(el("accountInfo"), `页面初始化失败：${error.message}`, "err");
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

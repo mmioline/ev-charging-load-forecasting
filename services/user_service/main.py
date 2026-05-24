@@ -1,4 +1,8 @@
+import time
+
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -8,9 +12,27 @@ from . import database, models, schemas, utils
 from .utils import SECRET_KEY, ALGORITHM, oauth2_scheme
 
 # 自动建表
-database.Base.metadata.create_all(bind=database.engine)
+def wait_for_database(retries: int = 20, delay_seconds: float = 1.5) -> None:
+    for attempt in range(1, retries + 1):
+        try:
+            database.Base.metadata.create_all(bind=database.engine)
+            return
+        except SQLAlchemyError:
+            if attempt == retries:
+                raise
+            time.sleep(delay_seconds)
+
+
+wait_for_database()
 
 app = FastAPI(title="EV-Charging-System User Service")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health_check():

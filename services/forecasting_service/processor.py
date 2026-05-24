@@ -18,11 +18,17 @@ def fetch_and_prepare_data(station_id: int):
 
     df['created_at'] = pd.to_datetime(df['created_at'])
     df.set_index('created_at', inplace=True)
-    # 关键修改：将 'H' 改为小写的 'h'
-    daily_load = df.resample('h').sum().fillna(0) #
+    hourly_load = df.resample('h').sum().fillna(0)
+    if len(hourly_load) >= 10:
+        training_values = hourly_load['kwh_consumed'].values
+    else:
+        training_values = df['kwh_consumed'].values
+
+    if len(training_values) < 10:
+        return None, None
     
     scaler = MinMaxScaler(feature_range=(-1, 1))
-    data_normalized = scaler.fit_transform(daily_load['kwh_consumed'].values.reshape(-1, 1))
+    data_normalized = scaler.fit_transform(training_values.reshape(-1, 1))
     
     return torch.FloatTensor(data_normalized).view(-1), scaler
 

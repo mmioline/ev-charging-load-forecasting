@@ -6,9 +6,9 @@ import requests
 def env_urls():
     """定义微服务基础路由地址"""
     return {
-        "user": "http://127.0.0.1:8000",
-        "station": "http://127.0.0.1:8001",
-        "forecast": "http://127.0.0.1:8003"
+        "user": "http://127.0.0.1:18010",
+        "station": "http://127.0.0.1:18011",
+        "forecast": "http://127.0.0.1:18013"
     }
 
 @pytest.fixture(scope="session")

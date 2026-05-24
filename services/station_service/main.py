@@ -1,7 +1,10 @@
+import time
 from datetime import datetime, timedelta
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import inspect, text
+from sqlalchemy.exc import SQLAlchemyError
 from typing import List
 from jose import JWTError, jwt
 
@@ -11,7 +14,18 @@ from .database import engine, get_db
 from .realtime_status import cache_station_status, get_cached_station_status
 
 # 自动建表
-models.Base.metadata.create_all(bind=engine)
+def wait_for_database(retries: int = 20, delay_seconds: float = 1.5) -> None:
+    for attempt in range(1, retries + 1):
+        try:
+            models.Base.metadata.create_all(bind=engine)
+            return
+        except SQLAlchemyError:
+            if attempt == retries:
+                raise
+            time.sleep(delay_seconds)
+
+
+wait_for_database()
 
 def ensure_station_runtime_columns():
     inspector = inspect(engine)
@@ -37,6 +51,13 @@ def ensure_station_runtime_columns():
 ensure_station_runtime_columns()
 
 app = FastAPI(title="EV-Charging-System Station Service")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def get_current_user(token: str = Depends(settings.oauth2_scheme)):
     credentials_exception = HTTPException(
