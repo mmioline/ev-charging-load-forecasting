@@ -20,9 +20,7 @@
       --shadow: 0 8px 24px rgba(18, 25, 38, 0.08);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -51,11 +49,7 @@
       gap: 16px;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 20px;
-      line-height: 1.2;
-    }
+    h1 { margin: 0; font-size: 20px; line-height: 1.2; }
 
     main {
       max-width: 1200px;
@@ -80,24 +74,10 @@
       top: 84px;
     }
 
-    .content {
-      display: grid;
-      gap: 16px;
-    }
-
-    section {
-      padding: 16px;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 16px;
-    }
-
-    h3 {
-      margin: 0 0 8px;
-      font-size: 14px;
-    }
+    .content { display: grid; gap: 16px; }
+    section { padding: 16px; }
+    h2 { margin: 0 0 12px; font-size: 16px; }
+    h3 { margin: 0 0 8px; font-size: 14px; }
 
     label {
       display: block;
@@ -127,9 +107,8 @@
       color: #fff;
     }
 
-    button:hover {
-      background: var(--primary-dark);
-    }
+    button:hover { background: var(--primary-dark); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
 
     button.secondary {
       background: #fff;
@@ -137,13 +116,8 @@
       border-color: var(--line);
     }
 
-    button.secondary:hover {
-      background: #f7f8fa;
-    }
-
-    button.danger {
-      background: var(--bad);
-    }
+    button.secondary:hover { background: #f7f8fa; }
+    button.danger { background: var(--bad); }
 
     .row {
       display: flex;
@@ -152,9 +126,7 @@
       flex-wrap: wrap;
     }
 
-    .row > * {
-      flex: 1 1 auto;
-    }
+    .row > * { flex: 1 1 auto; }
 
     .toolbar {
       display: flex;
@@ -180,7 +152,10 @@
       gap: 8px;
       align-content: start;
       background: #fff;
+      cursor: pointer;
     }
+
+    .station:hover { border-color: var(--blue); }
 
     .station.selected {
       border-color: var(--blue);
@@ -194,17 +169,9 @@
       gap: 8px;
     }
 
-    .name {
-      font-weight: 700;
-      line-height: 1.3;
-      overflow-wrap: anywhere;
-    }
+    .name { font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
 
-    .meta {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
+    .meta { color: var(--muted); font-size: 13px; line-height: 1.5; }
 
     .badge {
       display: inline-flex;
@@ -217,23 +184,9 @@
       border: 1px solid transparent;
     }
 
-    .badge.idle {
-      color: #05603a;
-      background: #d1fadf;
-      border-color: #a6f4c5;
-    }
-
-    .badge.charging {
-      color: #1849a9;
-      background: #d1e9ff;
-      border-color: #b2ddff;
-    }
-
-    .badge.abnormal, .badge.fault {
-      color: #912018;
-      background: #fee4e2;
-      border-color: #fecdca;
-    }
+    .badge.idle    { color: #05603a; background: #d1fadf; border-color: #a6f4c5; }
+    .badge.charging { color: #1849a9; background: #d1e9ff; border-color: #b2ddff; }
+    .badge.abnormal, .badge.fault { color: #912018; background: #fee4e2; border-color: #fecdca; }
 
     .summary {
       display: grid;
@@ -248,22 +201,10 @@
       min-height: 72px;
     }
 
-    .metric strong {
-      display: block;
-      font-size: 22px;
-      margin-bottom: 4px;
-    }
+    .metric strong { display: block; font-size: 22px; margin-bottom: 4px; }
+    .metric span   { color: var(--muted); font-size: 13px; }
 
-    .metric span {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
 
     th, td {
       text-align: left;
@@ -272,11 +213,7 @@
       vertical-align: top;
     }
 
-    th {
-      color: var(--muted);
-      font-weight: 600;
-      background: #fafbfc;
-    }
+    th { color: var(--muted); font-weight: 600; background: #fafbfc; }
 
     .message {
       min-height: 36px;
@@ -290,37 +227,27 @@
       overflow-wrap: anywhere;
     }
 
-    .message.ok {
-      background: #ecfdf3;
-      color: #05603a;
-    }
+    .message.ok  { background: #ecfdf3; color: #05603a; }
+    .message.err { background: #fef3f2; color: var(--bad); }
+    .message.loading { background: #fffbe6; color: #92400e; }
 
-    .message.err {
-      background: #fef3f2;
-      color: var(--bad);
-    }
+    .account { display: grid; gap: 10px; }
+    .hide { display: none; }
 
-    .account {
-      display: grid;
-      gap: 10px;
-    }
-
-    .hide {
-      display: none;
+    /* ── 调试信息栏 ── */
+    #debugBar {
+      font-size: 11px;
+      color: var(--muted);
+      background: #f7f8fa;
+      border-top: 1px solid var(--line);
+      padding: 4px 20px;
+      text-align: right;
     }
 
     @media (max-width: 900px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-
-      aside {
-        position: static;
-      }
-
-      .grid, .summary {
-        grid-template-columns: 1fr;
-      }
+      main { grid-template-columns: 1fr; }
+      aside { position: static; }
+      .grid, .summary { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -372,9 +299,7 @@
 
     <div class="content">
       <section>
-        <div class="toolbar">
-          <h2>运行概览</h2>
-        </div>
+        <div class="toolbar"><h2>运行概览</h2></div>
         <div class="summary">
           <div class="metric"><strong id="totalCount">0</strong><span>站点总数</span></div>
           <div class="metric"><strong id="idleCount">0</strong><span>空闲站点</span></div>
@@ -395,9 +320,7 @@
       </section>
 
       <section>
-        <div class="toolbar">
-          <h2>预测结果</h2>
-        </div>
+        <div class="toolbar"><h2>预测结果</h2></div>
         <div id="prediction" class="message">暂无预测结果</div>
       </section>
 
@@ -410,11 +333,7 @@
           <table>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>站点</th>
-                <th>时长</th>
-                <th>kWh</th>
-                <th>时间</th>
+                <th>ID</th><th>站点</th><th>时长</th><th>kWh</th><th>时间</th>
               </tr>
             </thead>
             <tbody id="records"></tbody>
@@ -424,47 +343,62 @@
     </div>
   </main>
 
+  <!-- 底部调试信息栏：显示当前 API 主机，方便快速排查连接问题 -->
+  <div id="debugBar">正在初始化…</div>
+
   <script>
+    // ─────────────────────────────────────────────
+    // 【修复 1】API 主机解析
+    //
+    // 问题根因：用 WSL IP（如 172.28.x.x）打开页面时，
+    // 旧版 resolveApiHost 会原样返回该 IP，拼出的
+    // http://172.28.x.x:18010 在 Windows 浏览器中不可达，
+    // 导致所有 fetch 静默失败，登录按钮看起来没反应。
+    //
+    // 修复策略：前端容器（18080）和后端服务（18010-18013）
+    // 都在同一台宿主机上，从浏览器视角访问后端永远走
+    // localhost。只有 localhost / 127.x.x.x / file:// / 0.0.0.0
+    // 这几种已知安全情况才保留，其余一律回落到 localhost。
+    // ─────────────────────────────────────────────
     function resolveApiHost() {
       const host = window.location.hostname;
-      if (!host || host === "0.0.0.0") {
-        return "localhost";
-      }
-      return host;
+      // file:// 协议、0.0.0.0、空字符串
+      if (!host || host === "0.0.0.0") return "localhost";
+      // 明确是本机
+      if (host === "localhost" || host.startsWith("127.")) return "localhost";
+      // WSL IP、外网 IP、主机名等 → 统一回落到 localhost
+      // （前端与后端始终在同一台宿主机，localhost 可达）
+      return "localhost";
     }
 
     const apiHost = resolveApiHost();
     const api = {
-      user: `http://${apiHost}:18010`,
-      station: `http://${apiHost}:18011`,
+      user:     `http://${apiHost}:18010`,
+      station:  `http://${apiHost}:18011`,
       charging: `http://${apiHost}:18012`,
       forecast: `http://${apiHost}:18013`,
     };
 
+    // 底部调试栏：显示实际使用的 API 地址，方便排查
+    document.getElementById("debugBar").textContent =
+      `API 主机：${apiHost}  |  用户:18010  站点:18011  充电:18012  预测:18013`;
+
+    // ─────────────────────────────────────────────
+    // localStorage 工具（file:// 下可能不可用，静默降级）
+    // ─────────────────────────────────────────────
     function readStorage(key) {
-      try {
-        return window.localStorage.getItem(key) || "";
-      } catch {
-        return "";
-      }
+      try { return window.localStorage.getItem(key) || ""; } catch { return ""; }
     }
-
     function writeStorage(key, value) {
-      try {
-        window.localStorage.setItem(key, value);
-      } catch {
-        // Some file:// browser contexts disable localStorage.
-      }
+      try { window.localStorage.setItem(key, value); } catch {}
     }
-
     function removeStorage(key) {
-      try {
-        window.localStorage.removeItem(key);
-      } catch {
-        // Some file:// browser contexts disable localStorage.
-      }
+      try { window.localStorage.removeItem(key); } catch {}
     }
 
+    // ─────────────────────────────────────────────
+    // 应用状态
+    // ─────────────────────────────────────────────
     const state = {
       token: readStorage("ev_token"),
       username: readStorage("ev_username"),
@@ -482,21 +416,21 @@
       };
     }
 
+    // ─────────────────────────────────────────────
+    // 通用 fetch 封装
+    // ─────────────────────────────────────────────
     async function request(url, options = {}) {
       let response;
       try {
         response = await fetch(url, options);
       } catch (error) {
-        throw new Error(`无法连接服务：${url}`);
+        // 网络层错误（CORS preflight 失败、连接拒绝等）
+        throw new Error(`无法连接服务（${url.replace(/https?:\/\/[^/]+/, "")}）。请确认 Docker 服务已启动，并通过 http://${apiHost}:18080 打开本页面。`);
       }
       const text = await response.text();
       let data = null;
       if (text) {
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = text;
-        }
+        try { data = JSON.parse(text); } catch { data = text; }
       }
       if (!response.ok) {
         const detail = data && data.detail ? data.detail : response.statusText;
@@ -505,14 +439,23 @@
       return data;
     }
 
+    // ─────────────────────────────────────────────
+    // 【修复 2】服务健康检查
+    //
+    // 旧版：检查失败后把错误写入 accountInfo，
+    // 但 boot() 里无论 healthy 与否都继续执行，
+    // 后续 login() 的错误又会覆盖这条消息，用户看不清状态。
+    //
+    // 修复：返回 boolean，让 boot() 决定是否继续；
+    // 错误消息写在 accountInfo，不被其他逻辑轻易覆盖。
+    // ─────────────────────────────────────────────
     async function checkServices() {
       try {
         await request(`${api.user}/health`);
         return true;
       } catch (error) {
-        setMessage(
-          el("accountInfo"),
-          `${error.message}。请确认 Docker 服务已启动，并用 http://${apiHost}:18080 打开本页面。`,
+        setMessage(el("accountInfo"),
+          `后端连接失败：${error.message}`,
           "err"
         );
         return false;
@@ -524,21 +467,23 @@
       node.className = `message ${kind}`.trim();
     }
 
+    // ─────────────────────────────────────────────
+    // 渲染
+    // ─────────────────────────────────────────────
     function statusClass(status) {
       if (status === "空闲") return "idle";
       if (status === "充电中") return "charging";
-      if (status === "异常") return "abnormal";
-      if (status === "故障") return "fault";
+      if (status === "异常" || status === "故障") return "abnormal";
       return "";
     }
 
     function updateSummary() {
-      const total = state.stations.length;
-      const idle = state.stations.filter((item) => item.status === "空闲").length;
-      const charging = state.stations.filter((item) => item.status === "充电中").length;
-      const abnormal = state.stations.filter((item) => item.status === "异常" || item.status === "故障").length;
-      el("totalCount").textContent = total;
-      el("idleCount").textContent = idle;
+      const total    = state.stations.length;
+      const idle     = state.stations.filter((s) => s.status === "空闲").length;
+      const charging = state.stations.filter((s) => s.status === "充电中").length;
+      const abnormal = state.stations.filter((s) => s.status === "异常" || s.status === "故障").length;
+      el("totalCount").textContent    = total;
+      el("idleCount").textContent     = idle;
       el("chargingCount").textContent = charging;
       el("abnormalCount").textContent = abnormal;
     }
@@ -546,26 +491,29 @@
     function renderStations() {
       updateSummary();
       const list = state.filterAvailable
-        ? state.stations.filter((item) => item.status === "空闲")
+        ? state.stations.filter((s) => s.status === "空闲")
         : state.stations;
+
       const container = el("stations");
       container.innerHTML = "";
+
+      // 重建下拉框（始终用全量站点，不受 filter 影响）
       el("stationSelect").innerHTML = "";
-
-      state.stations.forEach((station) => {
-        const option = document.createElement("option");
-        option.value = station.id;
-        option.textContent = `${station.id} - ${station.name}`;
-        el("stationSelect").appendChild(option);
-      });
-
       if (!state.stations.length) {
-        const option = document.createElement("option");
-        option.value = "";
-        option.textContent = "暂无站点";
-        el("stationSelect").appendChild(option);
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "暂无站点";
+        el("stationSelect").appendChild(opt);
+      } else {
+        state.stations.forEach((station) => {
+          const opt = document.createElement("option");
+          opt.value = station.id;
+          opt.textContent = `${station.id} - ${station.name}`;
+          el("stationSelect").appendChild(opt);
+        });
       }
 
+      // 保持之前的选中项
       if (!state.selectedStationId && state.stations[0]) {
         state.selectedStationId = state.stations[0].id;
       }
@@ -574,13 +522,15 @@
       }
 
       if (!list.length) {
-        container.innerHTML = '<div class="message">暂无站点。请先按演示流程创建 A/B/C 三个充电站，然后点击刷新。</div>';
+        container.innerHTML = state.filterAvailable
+          ? '<div class="message">当前无空闲站点。</div>'
+          : '<div class="message">暂无站点。请先按演示流程创建 A/B/C 三个充电站，然后点击刷新。</div>';
         return;
       }
 
       list.forEach((station) => {
         const card = document.createElement("article");
-        card.className = `station ${station.id === state.selectedStationId ? "selected" : ""}`;
+        card.className = `station${station.id === state.selectedStationId ? " selected" : ""}`;
         card.innerHTML = `
           <div class="titleline">
             <div class="name">${station.name}</div>
@@ -593,6 +543,7 @@
         `;
         card.addEventListener("click", () => {
           state.selectedStationId = station.id;
+          el("stationSelect").value = String(station.id);
           renderStations();
           setMessage(el("actionMsg"), `已选择 ${station.name}`, "ok");
         });
@@ -607,6 +558,9 @@
       return date.toLocaleString();
     }
 
+    // ─────────────────────────────────────────────
+    // 数据加载
+    // ─────────────────────────────────────────────
     async function loadStations() {
       if (!state.token) return;
       const stations = await request(`${api.station}/stations`, {
@@ -614,9 +568,6 @@
       });
       state.stations = stations;
       renderStations();
-      if (!stations.length) {
-        setMessage(el("actionMsg"), "当前数据库没有站点，请先执行演示流程第四步创建站点。");
-      }
     }
 
     async function loadRecords() {
@@ -643,83 +594,124 @@
       });
     }
 
+    // ─────────────────────────────────────────────
+    // 【修复 3】refreshAll 错误隔离
+    //
+    // 旧版：loadStations 和 loadRecords 共用同一个 await 链，
+    // 任一失败会导致另一个也不执行（下拉框不填充）。
+    //
+    // 修复：两个请求独立 try/catch，互不影响。
+    // ─────────────────────────────────────────────
     async function refreshAll() {
       if (!state.token) {
         setMessage(el("accountInfo"), "请先登录");
         return;
       }
-      try {
-        await loadStations();
-        await loadRecords();
+      let stationError = null;
+      let recordError  = null;
+
+      try { await loadStations(); } catch (e) { stationError = e.message; }
+      try { await loadRecords();  } catch (e) { recordError  = e.message; }
+
+      if (stationError || recordError) {
+        const msg = [stationError && `站点：${stationError}`, recordError && `记录：${recordError}`]
+          .filter(Boolean).join("；");
+        setMessage(el("accountInfo"), `当前用户：${state.username}（部分加载失败：${msg}）`, "err");
+      } else {
         setMessage(el("accountInfo"), `当前用户：${state.username}`, "ok");
-      } catch (error) {
-        setMessage(el("accountInfo"), error.message, "err");
       }
     }
 
+    // ─────────────────────────────────────────────
+    // 【修复 4】登录反馈
+    //
+    // 旧版：按钮点击后没有任何 loading 提示，
+    // 用户不知道是卡住还是没反应。
+    //
+    // 修复：点击后立刻 disable 按钮 + 显示"正在登录…"，
+    // 完成后恢复按钮状态。
+    // ─────────────────────────────────────────────
     async function login() {
       const username = el("username").value.trim();
       const password = el("password").value;
-      setMessage(el("accountInfo"), "正在登录...");
+      if (!username) {
+        setMessage(el("accountInfo"), "请填写用户名", "err");
+        return;
+      }
+      const btn = el("loginBtn");
+      btn.disabled = true;
+      setMessage(el("accountInfo"), "正在登录…", "loading");
+
       const body = new URLSearchParams();
       body.set("username", username);
       body.set("password", password);
       try {
         const data = await request(`${api.user}/login`, {
           method: "POST",
-          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body,
         });
-        state.token = data.access_token;
+        state.token    = data.access_token;
         state.username = username;
-        writeStorage("ev_token", state.token);
+        writeStorage("ev_token",    state.token);
         writeStorage("ev_username", state.username);
         setMessage(el("accountInfo"), `当前用户：${username}`, "ok");
         await refreshAll();
       } catch (error) {
-        setMessage(el("accountInfo"), error.message, "err");
+        setMessage(el("accountInfo"), `登录失败：${error.message}`, "err");
+      } finally {
+        btn.disabled = false;
       }
     }
 
     async function register() {
       const username = el("username").value.trim();
       const password = el("password").value;
-      const email = el("email").value.trim();
-      setMessage(el("accountInfo"), "正在注册...");
+      const email    = el("email").value.trim();
+      if (!username || !email) {
+        setMessage(el("accountInfo"), "请填写用户名和邮箱", "err");
+        return;
+      }
+      const btn = el("registerBtn");
+      btn.disabled = true;
+      setMessage(el("accountInfo"), "正在注册…", "loading");
       try {
         await request(`${api.user}/register`, {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({username, password, email}),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password, email }),
         });
-        setMessage(el("accountInfo"), "注册成功", "ok");
+        setMessage(el("accountInfo"), "注册成功，请点击登录", "ok");
       } catch (error) {
-        setMessage(el("accountInfo"), error.message, "err");
+        setMessage(el("accountInfo"), `注册失败：${error.message}`, "err");
+      } finally {
+        btn.disabled = false;
       }
     }
 
     async function charge() {
       const stationId = Number(el("stationSelect").value || state.selectedStationId);
-      const duration = Number(el("duration").value);
-      const kwh = Number(el("kwh").value);
+      const duration  = Number(el("duration").value);
+      const kwh       = Number(el("kwh").value);
       if (!stationId) {
         setMessage(el("actionMsg"), "请选择站点", "err");
         return;
       }
+      const btn = el("chargeBtn");
+      btn.disabled = true;
+      setMessage(el("actionMsg"), "正在提交充电请求…", "loading");
       try {
         const record = await request(`${api.charging}/charging`, {
           method: "POST",
           headers: authHeaders(),
-          body: JSON.stringify({
-            station_id: stationId,
-            duration_minutes: duration,
-            kwh_consumed: kwh,
-          }),
+          body: JSON.stringify({ station_id: stationId, duration_minutes: duration, kwh_consumed: kwh }),
         });
         setMessage(el("actionMsg"), `充电记录已创建：#${record.id}`, "ok");
         await refreshAll();
       } catch (error) {
-        setMessage(el("actionMsg"), error.message, "err");
+        setMessage(el("actionMsg"), `充电失败：${error.message}`, "err");
+      } finally {
+        btn.disabled = false;
       }
     }
 
@@ -729,6 +721,7 @@
         setMessage(el("prediction"), "请选择站点", "err");
         return;
       }
+      setMessage(el("prediction"), "正在请求预测…", "loading");
       try {
         const data = await request(`${api.forecast}/predict/${stationId}`);
         const load = typeof data.predicted_load_kwh === "number"
@@ -740,7 +733,7 @@
           "ok"
         );
       } catch (error) {
-        setMessage(el("prediction"), error.message, "err");
+        setMessage(el("prediction"), `预测失败：${error.message}`, "err");
       }
     }
 
@@ -748,14 +741,17 @@
       if (name === "bob") {
         el("username").value = "bob";
         el("password").value = "bob1234";
-        el("email").value = "bob@ev.com";
+        el("email").value    = "bob@ev.com";
         return;
       }
       el("username").value = "alice";
       el("password").value = "alice1234";
-      el("email").value = "alice@ev.com";
+      el("email").value    = "alice@ev.com";
     }
 
+    // ─────────────────────────────────────────────
+    // 事件绑定
+    // ─────────────────────────────────────────────
     function bindEvents() {
       el("loginBtn").addEventListener("click", login);
       el("registerBtn").addEventListener("click", register);
@@ -776,7 +772,7 @@
         renderStations();
       });
       el("logoutBtn").addEventListener("click", () => {
-        state.token = "";
+        state.token    = "";
         state.username = "";
         removeStorage("ev_token");
         removeStorage("ev_username");
@@ -785,24 +781,30 @@
         renderStations();
         setMessage(el("accountInfo"), "未登录");
       });
-      document.querySelectorAll("[data-fill]").forEach((button) => {
-        button.addEventListener("click", () => fillAccount(button.dataset.fill));
+      document.querySelectorAll("[data-fill]").forEach((btn) => {
+        btn.addEventListener("click", () => fillAccount(btn.dataset.fill));
       });
     }
 
+    // ─────────────────────────────────────────────
+    // 启动
+    // ─────────────────────────────────────────────
     async function boot() {
       try {
         bindEvents();
         renderStations();
+
+        // 先做健康检查；失败时 accountInfo 已有明确错误消息，不再继续
         const healthy = await checkServices();
+        if (!healthy) return;
+
         if (state.username) {
+          // 有缓存 token，尝试自动恢复会话
           el("username").value = state.username;
-          setMessage(el("accountInfo"), `当前用户：${state.username}`, "ok");
-          if (healthy) {
-            refreshAll();
-          }
-        } else if (healthy) {
-          setMessage(el("accountInfo"), `请登录。当前接口主机：${apiHost}`);
+          setMessage(el("accountInfo"), `正在恢复会话（${state.username}）…`, "loading");
+          await refreshAll();
+        } else {
+          setMessage(el("accountInfo"), `服务正常，请登录。当前接口主机：${apiHost}`);
         }
       } catch (error) {
         setMessage(el("accountInfo"), `页面初始化失败：${error.message}`, "err");

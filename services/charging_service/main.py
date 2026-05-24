@@ -90,21 +90,31 @@ def get_station_for_update(station_id: int, db: Session) -> models.Station:
         raise HTTPException(status_code=404, detail="Station not found")
     return station
 
-# --- 业务接口：注意字段映射 ---
-# 修改为正确的类名 ChargingRecordOut 和 ChargingRecordCreate
+
+# 可接受充电的站点状态白名单
+CHARGEABLE_STATUS = {"空闲"}
+
+
 @app.post("/charging", response_model=schemas.ChargingRecordOut)
 def create_charging_record(
-    record: schemas.ChargingRecordCreate, 
-    db: Session = Depends(get_db), 
+    record: schemas.ChargingRecordCreate,
+    db: Session = Depends(get_db),
     username: str = Depends(get_current_user),
 ):
     station = get_station_for_update(record.station_id, db)
-    now = datetime.utcnow()
 
+    # 状态校验：非空闲站点拒绝充电请求
+    if station.status not in CHARGEABLE_STATUS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"站点当前状态为「{station.status}」，无法发起充电",
+        )
+
+    now = datetime.utcnow()
     new_record = models.ChargingRecord(
         user_id=username,
-        station_id=record.station_id,   
-        kwh_consumed=record.kwh_consumed, 
+        station_id=record.station_id,
+        kwh_consumed=record.kwh_consumed,
         duration_minutes=record.duration_minutes
     )
     db.add(new_record)
