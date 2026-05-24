@@ -4,11 +4,11 @@ from fastapi.security import OAuth2PasswordBearer
 
 class Settings(BaseSettings):
     # 数据库连接
-    DATABASE_URL: str = "mysql+pymysql://root:root@localhost:3306/intelli_shop"
+    DATABASE_URL: str = "mysql+pymysql://root:root@localhost:3306/ev_charging"
     REDIS_URL: str = "redis://localhost:6379/0"
     
     # 安全加密 (必须与 user_service 保持一致)
-    SECRET_KEY: str = "your-super-secret-key-for-intellishop"
+    SECRET_KEY: str = "your-super-secret-key-for-ev-charging"
     ALGORITHM: str = "HS256"
     
     # 定义 OAuth2 方案

@@ -3,9 +3,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # 数据库连接配置
-    DATABASE_URL: str = "mysql+pymysql://root:root@localhost:3306/intelli_shop"
+    DATABASE_URL: str = "mysql+pymysql://root:root@localhost:3306/ev_charging"
     # JWT 加密配置
-    SECRET_KEY: str = "your-super-secret-key-for-intellishop"
+    SECRET_KEY: str = "your-super-secret-key-for-ev-charging"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 

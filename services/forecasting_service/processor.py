@@ -32,23 +32,19 @@ def fetch_and_prepare_data(station_id: int):
     
     return torch.FloatTensor(data_normalized).view(-1), scaler
 
-def predict_next_day(product_id: int):
-    data, scaler = fetch_and_prepare_data(product_id)
+def predict_next_day(station_id: int):
+    data, scaler = fetch_and_prepare_data(station_id)
     if data is None or len(data) < 7:
         return "数据量不足，无法预测"
     
     model = LSTMForecaster()
     model_dir = os.path.join(os.path.dirname(__file__), "models")
-    model_path = os.path.join(model_dir, f"station_{product_id}.pth")
-    legacy_model_path = os.path.join(model_dir, f"product_{product_id}.pth")
+    model_path = os.path.join(model_dir, f"station_{station_id}.pth")
     
     # 检查是否有训练好的模型，如果有则加载
     if os.path.exists(model_path):
         model.load_state_dict(torch.load(model_path))
-        print(f"成功加载站点 {product_id} 的预训练模型。")
-    elif os.path.exists(legacy_model_path):
-        model.load_state_dict(torch.load(legacy_model_path))
-        print(f"成功加载站点 {product_id} 的兼容模型。")
+        print(f"成功加载站点 {station_id} 的预训练模型。")
     else:
         print("未发现预训练模型，使用随机初始化权重（预测结果可能不准）。")
 

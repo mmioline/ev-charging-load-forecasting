@@ -9,8 +9,8 @@ async def client():
         yield ac
 
 @pytest.mark.anyio
-async def test_order_unauthorized(client):
-    """验证未授权无法下单"""
-    payload = {"product_id": 1, "quantity": 5}
-    response = await client.post("/orders", json=payload)
+async def test_charging_record_unauthorized(client):
+    """验证未授权无法创建充电记录"""
+    payload = {"station_id": 1, "duration_minutes": 30, "kwh_consumed": 12.5}
+    response = await client.post("/charging", json=payload)
     assert response.status_code == 401

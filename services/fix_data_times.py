@@ -1,7 +1,7 @@
 import pymysql
 from datetime import datetime, timedelta
 
-conn = pymysql.connect(host='localhost', user='root', password='root', database='intelli_shop')
+conn = pymysql.connect(host='localhost', user='root', password='root', database='ev_charging')
 cursor = conn.cursor()
 cursor.execute("SELECT id FROM charging_records")
 ids = [row[0] for row in cursor.fetchall()]

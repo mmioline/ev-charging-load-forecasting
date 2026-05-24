@@ -1,13 +1,13 @@
 services:
   db:
     image: docker.m.daocloud.io/library/mysql:8.0
-    container_name: intellishop_db
+    container_name: ev_charging_db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: intelli_shop
+      MYSQL_DATABASE: ev_charging
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ev_charging_mysql_data:/var/lib/mysql
 
   redis:
     image: docker.m.daocloud.io/library/redis:7-alpine
@@ -23,7 +23,7 @@ services:
       - db
     env_file: .env
     environment:
-      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/ev_charging
 
   station_service:
     build: ./services/station_service
@@ -35,7 +35,7 @@ services:
       - redis
     env_file: .env
     environment:
-      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/ev_charging
       - REDIS_URL=redis://redis:6379/0
 
   charging_service:
@@ -49,7 +49,7 @@ services:
       - redis
     env_file: .env
     environment:
-      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/ev_charging
       - STATION_SERVICE_URL=http://station_service:8001
       - REDIS_URL=redis://redis:6379/0
 
@@ -62,7 +62,7 @@ services:
       - db
     env_file: .env
     environment:
-      - DATABASE_URL=mysql+pymysql://root:root@db:3306/intelli_shop
+      - DATABASE_URL=mysql+pymysql://root:root@db:3306/ev_charging
 
   frontend:
     build: ./frontend
@@ -76,4 +76,4 @@ services:
       - forecasting_service
 
 volumes:
-  mysql_data:
+  ev_charging_mysql_data:

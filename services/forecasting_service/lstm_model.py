@@ -5,9 +5,9 @@ import torch.nn as nn
 class LSTMForecaster(nn.Module):
     def __init__(self, input_size=1, hidden_layer_size=100, output_size=1):
         """
-        input_size: 输入特征维度（我们只有销量，所以是1）
+        input_size: 输入特征维度（当前只使用充电负荷，所以是1）
         hidden_layer_size: 隐藏层神经元数量
-        output_size: 输出维度（预测下一天销量，所以是1）
+        output_size: 输出维度（预测下一时段负荷，所以是1）
         """
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
