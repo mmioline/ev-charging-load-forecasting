@@ -1,26 +1,33 @@
-# Python 缓存
+# 编译缓存与运行时临时文件
 __pycache__/
-*.py[cod]
-*$py.class
-
-# 深度学习模型文件 (权重文件通常较大，建议不上传或使用 LFS)
-*.pt
-*.pth
-checkpoint/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
 
 # 虚拟环境
 venv/
 .venv/
 env/
 
-# 环境配置文件 (包含数据库密码等敏感信息)
-.env
+# 模型权重与训练检查点
+*.pt
+*.pth
+checkpoint/
 
-# Docker 数据卷
+# 环境变量与本地配置文件
+.env
+.env.*
+*.local.json
+.claude/
+.idea/
+.vscode/
+
+# 操作系统与容器卷缓存
+.DS_Store
+Thumbs.db
+.docker/
 docker_volumes/
 mysql_data/
-
-# IDE 与系统文件
-.vscode/
-.idea/
-.DS_Store

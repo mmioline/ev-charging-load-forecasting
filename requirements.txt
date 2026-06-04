@@ -5,4 +5,5 @@ pymysql
 aioredis
 pydantic
 pytest
+requests
 httpx
