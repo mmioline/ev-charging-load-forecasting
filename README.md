@@ -1,104 +1,24 @@
-# EV 充电桩实时监测与空闲状态查询
+# 智能电动车充电桩业务管理与时序监测系统
 
-本项目是一个电动汽车的充电监控与调度系统，采用 FastAPI 微服务、MySQL、Redis、Docker Compose 和单页前端实现。系统支持用户登录、充电站状态查询、充电记录创建、异常状态自动治理、充电记录隔离，以及未来 1 小时站点空闲概率预测。
+本项目是一套面向分布式物联网场景的智能充电桩业务监控、调度与负荷预测系统。系统采用轻量化分布式微服务架构进行解耦，通过 Docker 容器化实现一键式敏捷部署，并构建了基于 Pytest 的全链路自动化质量保障工程。
 
-## 服务端口
+## 1. 系统架构与技术栈
+* **后端核心**：FastAPI (异步高性能 Web 框架) + SQLAlchemy (ORM)
+* **时序推理**：PyTorch / LSTM (深度学习时序负荷预测)
+* **存储治理**：MySQL 8.0 (持久化业务数据)
+* **交付运维**：Docker / Docker Compose (微服务容器化编排)
+* **质量保证**：Pytest + Requests (接口自动化测试框架)
 
-| 服务 | 目录 | 对外端口 | 容器端口 | 说明 |
-| --- | --- | ---: | ---: | --- |
-| 前端页面 | `frontend` | `18080` | `8080` | 单页 HTML + 原生 JS |
-| 用户服务 | `services/user_service` | `18010` | `8000` | 注册、登录、JWT 鉴权 |
-| 站点服务 | `services/station_service` | `18011` | `8001` | 站点创建、状态查询、异常治理 |
-| 充电记录服务 | `services/charging_service` | `18012` | `8002` | 创建和查询个人充电记录 |
-| 预测服务 | `services/forecasting_service` | `18013` | `8003` | 负荷预测与空闲概率预测 |
-| MySQL | Docker 内部 | 不暴露 | `3306` | 业务数据库 `ev_charging` |
-| Redis | Docker 内部 | 不暴露 | `6379` | 站点实时状态缓存 |
-
-## 目录结构
-
+## 2. 目录工程规范
 ```text
-.
-├── docker-compose.yml
-├── frontend/
-│   ├── Dockerfile
-│   └── index.html
-├── services/
-│   ├── user_service/
-│   ├── station_service/
-│   ├── charging_service/
-│   ├── forecasting_service/
-│   ├── seed_data.py
-│   └── fix_data_times.py
-├── api_pytest/
-│   ├── conftest.py
-│   └── testcases/
-└── 系统演示.md
-```
-
-## 启动
-
-```bash
-docker compose down -v --remove-orphans
-docker compose up -d --build --force-recreate
-docker compose ps
-```
-
-正常情况下应看到：
-
-```text
-frontend              0.0.0.0:18080->8080/tcp
-user_service          0.0.0.0:18010->8000/tcp
-station_service       0.0.0.0:18011->8001/tcp
-charging_service      0.0.0.0:18012->8002/tcp
-forecasting_service   0.0.0.0:18013->8003/tcp
-```
-
-健康检查：
-
-```bash
-curl -sS http://localhost:18010/health
-```
-
-打开前端：
-
-```text
-http://localhost:18080
-```
-
-如果项目运行在 WSL 中，Windows 浏览器无法访问 `localhost:18080` 时，可尝试：
-
-```text
-http://127.0.0.1:18080
-http://<WSL_IP>:18080
-```
-
-## 演示流程
-
-完整演示步骤见：
-
-```text
-系统演示.md
-```
-
-推荐演示主线：
-
-```text
-Alice 登录 -> 查询站点 -> 发起充电 -> 查看个人记录 -> 查看空闲概率预测
-Bob 登录 -> 验证无法查看 Alice 的充电记录
-C 站超时 -> 自动标记为异常
-```
-
-## 测试
-
-```bash
-source venv/bin/activate
-pytest api_pytest/testcases -q
-```
-
-生成测试报告：
-
-```bash
-pytest api_pytest/testcases \
-  --html=api_pytest/reports/EV_Pytest_Report.html \
-  --self-contained-html
-```
+├── api_pytest/               # 独立端到端/全链路接口自动化测试工程
+│   ├── conftest.py           # Pytest 全局配置及 JWT Token 动态注入 Fixture
+│   └── testcases/            # 场景化自动化测试用例集
+├── services/                 # 分布式微服务核心代码域
+│   ├── user_service/         # 用户鉴权服务 (基于 OAuth2 / JWT 规范)
+│   ├── station_service/      # 充电站点状态监控服务 (提供秒级状态流转)
+│   ├── charging_service/     # 充电流水采集与调度业务服务
+│   ├── forecasting_service/  # 基于 LSTM 模型的智能时序推理微服务
+│   └── integration_test.py   # 跨服务全链路集成测试脚本
+├── docker-compose.yml        # 生产/测试环境一键式容器编排引擎
+└── requirements.txt          # 项目全局依赖规范
