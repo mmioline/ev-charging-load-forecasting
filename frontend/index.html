@@ -352,10 +352,10 @@
     //
     // 问题根因：用 WSL IP（如 172.28.x.x）打开页面时，
     // 旧版 resolveApiHost 会原样返回该 IP，拼出的
-    // http://172.28.x.x:18010 在 Windows 浏览器中不可达，
+    // http://172.28.x.x:28010 在 Windows 浏览器中不可达，
     // 导致所有 fetch 静默失败，登录按钮看起来没反应。
     //
-    // 修复策略：前端容器（18080）和后端服务（18010-18013）
+    // 修复策略：前端容器（28080）和后端服务（28010-28013）
     // 都在同一台宿主机上，从浏览器视角访问后端永远走
     // localhost。只有 localhost / 127.x.x.x / file:// / 0.0.0.0
     // 这几种已知安全情况才保留，其余一律回落到 localhost。
@@ -373,15 +373,15 @@
 
     const apiHost = resolveApiHost();
     const api = {
-      user:     `http://${apiHost}:18010`,
-      station:  `http://${apiHost}:18011`,
-      charging: `http://${apiHost}:18012`,
-      forecast: `http://${apiHost}:18013`,
+      user:     `http://${apiHost}:28010`,
+      station:  `http://${apiHost}:28011`,
+      charging: `http://${apiHost}:28012`,
+      forecast: `http://${apiHost}:28013`,
     };
 
     // 底部调试栏：显示实际使用的 API 地址，方便排查
     document.getElementById("debugBar").textContent =
-      `API 主机：${apiHost}  |  用户:18010  站点:18011  充电:18012  预测:18013`;
+      `API 主机：${apiHost}  |  用户:28010  站点:28011  充电:28012  预测:28013`;
 
     // ─────────────────────────────────────────────
     // localStorage 工具（file:// 下可能不可用，静默降级）
@@ -425,7 +425,7 @@
         response = await fetch(url, options);
       } catch (error) {
         // 网络层错误（CORS preflight 失败、连接拒绝等）
-        throw new Error(`无法连接服务（${url.replace(/https?:\/\/[^/]+/, "")}）。请确认 Docker 服务已启动，并通过 http://${apiHost}:18080 打开本页面。`);
+        throw new Error(`无法连接服务（${url.replace(/https?:\/\/[^/]+/, "")}）。请确认 Docker 服务已启动，并通过 http://${apiHost}:28080 打开本页面。`);
       }
       const text = await response.text();
       let data = null;

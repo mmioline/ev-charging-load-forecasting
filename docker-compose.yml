@@ -17,8 +17,6 @@ services:
   user_service:
     build: ./services/user_service
     container_name: user_service
-    ports:
-      - "18010:8000"
     depends_on:
       - db
     env_file: .env
@@ -28,8 +26,6 @@ services:
   station_service:
     build: ./services/station_service
     container_name: station_service
-    ports:
-      - "18011:8001"
     depends_on:
       - db
       - redis
@@ -41,8 +37,6 @@ services:
   charging_service:
     build: ./services/charging_service
     container_name: charging_service
-    ports:
-      - "18012:8002"
     depends_on:
       - db
       - station_service
@@ -56,8 +50,6 @@ services:
   forecasting_service:
     build: ./services/forecasting_service
     container_name: forecasting_service
-    ports:
-      - "18013:8003"
     depends_on:
       - db
     env_file: .env
@@ -67,13 +59,30 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
-    ports:
-      - "18080:8080"
     depends_on:
       - user_service
       - station_service
       - charging_service
       - forecasting_service
+
+  proxy:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    restart: always
+    ports:
+      - "28010:28010"
+      - "28011:28011"
+      - "28012:28012"
+      - "28013:28013"
+      - "28080:28080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user_service
+      - station_service
+      - charging_service
+      - forecasting_service
+      - frontend
 
 volumes:
   ev_charging_mysql_data:

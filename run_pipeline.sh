@@ -3,9 +3,9 @@
 # 确保脚本只要有一行报错就立刻停止执行（工业级 Shell 脚本规范）
 set -e
 
-USER_URL="http://localhost:18010"
-STATION_URL="http://localhost:18011"
-FORECAST_URL="http://localhost:18013"
+USER_URL="http://localhost:28010"
+STATION_URL="http://localhost:28011"
+FORECAST_URL="http://localhost:28013"
 
 echo "=================================================="
 echo "[QA Pipeline] 开始执行一键式容器化全链路测试流..."

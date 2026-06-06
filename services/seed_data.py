@@ -3,8 +3,8 @@ import random
 import os
 
 # 配置地址
-USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:18010/login")
-CHARGING_SERVICE_URL = os.getenv("CHARGING_SERVICE_URL", "http://localhost:18012/charging")
+USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:28010/login")
+CHARGING_SERVICE_URL = os.getenv("CHARGING_SERVICE_URL", "http://localhost:28012/charging")
 SEED_STATION_IDS = [
     int(station_id)
     for station_id in os.getenv("SEED_STATION_IDS", "1,2").split(",")
